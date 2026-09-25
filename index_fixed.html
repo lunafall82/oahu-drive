@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b6e75">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Oahu Drive</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f8f7;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",Arial,sans-serif;color:#17373b}
+.wrap{max-width:540px;margin:auto;padding:22px 14px 40px}h1{margin:0 4px 3px;font-size:29px}.sub{margin:0 4px 17px;color:#708184;font-size:14px}
+.card{background:#fff;border-radius:20px;padding:17px;margin-bottom:13px;box-shadow:0 8px 26px rgba(24,61,65,.07)}
+h2{font-size:16px;margin:0 0 10px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.place{min-height:66px;border:1px solid #d9e7e4;border-radius:14px;background:#fff;color:#17373b;font-size:14px;font-weight:700;padding:9px}
+.place.selected{background:#0b6e75;color:#fff;border-color:#0b6e75}.emoji{display:block;font-size:22px;margin-bottom:3px}
+.result{text-align:center;padding:7px 0 15px}.route{font-size:14px;color:#708184;margin-bottom:5px}.time{font-size:36px;font-weight:800}
+.btn{display:block;width:100%;border:0;border-radius:13px;padding:14px;text-align:center;text-decoration:none;font-size:16px;font-weight:700}
+.map{background:#0b6e75;color:#fff}.swap{background:#e8f2f0;color:#0b6e75;margin-top:9px}.note{font-size:12px;color:#708184;line-height:1.5;margin-top:12px}
+</style>
+</head><body><main class="wrap">
+<h1>🌴 Oahu Drive</h1><div class="sub">출발지와 목적지를 터치하세요</div>
+
+<section class="card"><h2>① 출발지</h2><div class="grid" id="fromGrid">
+<button type="button" class="place selected" data-from="0"><span class="emoji">🏨</span>쉐라톤</button>
+<button type="button" class="place" data-from="1"><span class="emoji">🏖️</span>카할라</button>
+<button type="button" class="place" data-from="2"><span class="emoji">🌊</span>웨이메아 베이</button>
+<button type="button" class="place" data-from="3"><span class="emoji">🌺</span>PCC</button>
+<button type="button" class="place" data-from="4"><span class="emoji">🍍</span>돌 플랜테이션</button>
+<button type="button" class="place" data-from="5"><span class="emoji">🦖</span>쿠알로아 랜치</button>
+</div></section>
+
+<section class="card"><h2>② 목적지</h2><div class="grid" id="toGrid">
+<button type="button" class="place" data-to="0"><span class="emoji">🏨</span>쉐라톤</button>
+<button type="button" class="place" data-to="1"><span class="emoji">🏖️</span>카할라</button>
+<button type="button" class="place" data-to="2"><span class="emoji">🌊</span>웨이메아 베이</button>
+<button type="button" class="place selected" data-to="3"><span class="emoji">🌺</span>PCC</button>
+<button type="button" class="place" data-to="4"><span class="emoji">🍍</span>돌 플랜테이션</button>
+<button type="button" class="place" data-to="5"><span class="emoji">🦖</span>쿠알로아 랜치</button>
+</div></section>
+
+<section class="card">
+<div class="result"><div class="route" id="route">쉐라톤 와이키키 → 폴리네시안 문화센터</div><div class="time" id="time">약 1시간 15분</div></div>
+<a class="btn map" id="maps" href="https://www.google.com/maps/dir/?api=1&origin=Sheraton%20Waikiki%20Beach%20Resort%2C%20Honolulu%2C%20HI&destination=Polynesian%20Cultural%20Center%2C%20Laie%2C%20HI&travelmode=driving">🗺️ Google Maps 실시간 길찾기</a>
+<button type="button" class="btn swap" id="swap">⇅ 출발지 ↔ 목적지 바꾸기</button>
+<div class="note">※ 표시 시간은 여행 계획용 예상치입니다. 실제 출발 직전에는 Google Maps에서 교통상황을 확인하세요.</div>
+</section></main>
+<script>
+(function(){
+var P=[
+["쉐라톤 와이키키","Sheraton Waikiki Beach Resort, Honolulu, HI"],
+["카할라","The Kahala Hotel & Resort, Honolulu, HI"],
+["웨이메아 베이","Waimea Bay Beach Park, Haleiwa, HI"],
+["폴리네시안 문화센터","Polynesian Cultural Center, Laie, HI"],
+["돌 플랜테이션","Dole Plantation, Wahiawa, HI"],
+["쿠알로아 랜치","Kualoa Ranch, Kaneohe, HI"]];
+var T=[[0,20,75,75,40,50],[20,0,75,65,55,40],[75,75,0,35,22,50],[75,65,35,0,50,23],[40,55,22,50,0,45],[50,40,50,23,45,0]];
+var from=0,to=3;
+function fmt(m){if(m===0)return "같은 장소";if(m<60)return "약 "+m+"분";var h=Math.floor(m/60),r=m%60;return "약 "+h+"시간"+(r?" "+r+"분":"");}
+function mark(attr,val){
+ var buttons=document.querySelectorAll("button["+attr+"]"),i;
+ for(i=0;i<buttons.length;i++){buttons[i].className="place"+(parseInt(buttons[i].getAttribute(attr),10)===val?" selected":"");}
+}
+function update(){
+ mark("data-from",from);mark("data-to",to);
+ document.getElementById("route").innerHTML=P[from][0]+" → "+P[to][0];
+ document.getElementById("time").innerHTML=fmt(T[from][to]);
+ document.getElementById("maps").href="https://www.google.com/maps/dir/?api=1&origin="+encodeURIComponent(P[from][1])+"&destination="+encodeURIComponent(P[to][1])+"&travelmode=driving";
+}
+var fb=document.querySelectorAll("button[data-from]"),tb=document.querySelectorAll("button[data-to]"),i;
+for(i=0;i<fb.length;i++){fb[i].onclick=function(){from=parseInt(this.getAttribute("data-from"),10);update();};}
+for(i=0;i<tb.length;i++){tb[i].onclick=function(){to=parseInt(this.getAttribute("data-to"),10);update();};}
+document.getElementById("swap").onclick=function(){var x=from;from=to;to=x;update();};
+update();
+})();
+</script></body></html>

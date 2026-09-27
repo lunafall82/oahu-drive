@@ -1,75 +1,328 @@
-<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b6e75">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>Oahu Drive</title>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b6e75"><title>Oahu Trip Navigator</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f3f8f7;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",Arial,sans-serif;color:#17373b}
-.wrap{max-width:540px;margin:auto;padding:22px 14px 40px}h1{margin:0 4px 3px;font-size:29px}.sub{margin:0 4px 17px;color:#708184;font-size:14px}
-.card{background:#fff;border-radius:20px;padding:17px;margin-bottom:13px;box-shadow:0 8px 26px rgba(24,61,65,.07)}
-h2{font-size:16px;margin:0 0 10px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.place{min-height:66px;border:1px solid #d9e7e4;border-radius:14px;background:#fff;color:#17373b;font-size:14px;font-weight:700;padding:9px}
-.place.selected{background:#0b6e75;color:#fff;border-color:#0b6e75}.emoji{display:block;font-size:22px;margin-bottom:3px}
-.result{text-align:center;padding:7px 0 15px}.route{font-size:14px;color:#708184;margin-bottom:5px}.time{font-size:36px;font-weight:800}
-.btn{display:block;width:100%;border:0;border-radius:13px;padding:14px;text-align:center;text-decoration:none;font-size:16px;font-weight:700}
-.map{background:#0b6e75;color:#fff}.swap{background:#e8f2f0;color:#0b6e75;margin-top:9px}.note{font-size:12px;color:#708184;line-height:1.5;margin-top:12px}
-</style>
-</head><body><main class="wrap">
-<h1>🌴 Oahu Drive</h1><div class="sub">출발지와 목적지를 터치하세요</div>
+*{box-sizing:border-box}body{margin:0;background:#f3f8f7;color:#18383c;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",Arial,sans-serif}.w{max-width:600px;margin:auto;padding:18px 13px 40px}.hero{background:#0b6e75;color:white;border-radius:22px;padding:19px;margin-bottom:12px}h1{margin:0;font-size:27px}.date,.status{font-size:13px;opacity:.9;margin-top:5px}.clock{font-size:20px;font-weight:800;margin-top:13px}.card{background:white;border-radius:18px;padding:15px;margin-bottom:11px;box-shadow:0 6px 22px #173d4112}.step{border:2px solid transparent}.step.current{border-color:#0b6e75}.step.done{opacity:.58}.head{display:flex;gap:10px}.ico{min-width:42px;height:42px;border-radius:12px;background:#e6f2ef;display:flex;align-items:center;justify-content:center;font-size:21px}.current .ico{background:#0b6e75;color:white}.tm{font-size:13px;color:#0b6e75;font-weight:800}.ttl{font-size:18px;font-weight:850;margin:2px 0}.desc,.move{font-size:13px;line-height:1.5}.desc{color:#718184}.move{background:#f5f9f8;padding:10px;border-radius:11px;margin-top:10px}.btns{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.b{display:block;border:0;border-radius:11px;padding:11px;text-align:center;text-decoration:none;font-size:13px;font-weight:800}.p{background:#0b6e75;color:#fff}.s{background:#e6f2ef;color:#0b6e75}h2{font-size:19px;margin:2px 0 10px}.rank{display:flex;gap:8px;padding:10px 0;border-top:1px solid #edf2f1}.rank:first-of-type{border-top:0}.n{width:23px;font-weight:900;color:#0b6e75}.rn{font-weight:850}.rate,.why{font-size:12px;margin-top:3px}.rate{color:#536d70}.why{color:#7b898b}.links a{font-size:12px;color:#0b6e75;font-weight:750;text-decoration:none;margin-right:12px}.tag{background:#fff2bd;border-radius:7px;padding:2px 6px;font-size:10px}.note{font-size:11px;line-height:1.45;color:#7b898b;background:#fff8ef;padding:9px;border-radius:10px;margin-top:8px}.nav{position:sticky;bottom:8px;display:grid;grid-template-columns:1fr 1.5fr;gap:8px;background:#fffffff2;padding:8px;border-radius:15px;box-shadow:0 4px 20px #0002}.nav button{border:0;border-radius:11px;padding:13px;font-weight:800}.prev{background:#e7eeee}.next{background:#0b6e75;color:white}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}
+.tab{border:0;border-radius:13px;padding:12px;font-weight:850;background:#e6efed;color:#456164}
+.tab.active{background:#0b6e75;color:#fff}
+.daypanel{display:none}.daypanel.active{display:block}
+.callout{background:#eaf7f5;border-left:4px solid #0b6e75;border-radius:11px;padding:10px 11px;font-size:12px;line-height:1.55;margin:10px 0}
+.foodpick{background:#f8fbfa;border-radius:11px;padding:9px;margin-top:7px}
+.daylabel{font-size:12px;opacity:.9;margin-top:3px}
+</style></head><body><main class="w">
+<section class="hero"><h1 id="heroTitle">🌴 Oahu · Day 1</h1>
+<div class="date" id="heroDate">2026. 9. 30 · Honolulu</div>
+<div class="clock" id="clock">현지시간 계산 중…</div>
+<div class="status" id="status"></div></section>
+<div class="tabs">
+<button class="tab" id="tab-day1" data-day="day1">9/30 · Day 1</button>
+<button class="tab" id="tab-day2" data-day="day2">10/1 · Day 2</button>
+<button class="tab" id="tab-day3" data-day="day3">10/2 · Day 3</button>
+</div><section id="day1" class="daypanel">
+<div id="steps">
+<section class="card step" data-start="14:30"><div class="head"><div class="ico">✈️</div><div><div class="tm">14:30</div><div class="ttl">HNL 공항 → 쉐라톤</div><div class="desc">렌터카 수령 후 Sheraton Waikiki Beach Resort로 이동.</div></div></div><div class="move">🚗 렌터카 · <b>약 25~35분</b></div><div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Daniel+K.+Inouye+International+Airport&destination=Sheraton+Waikiki+Beach+Resort&travelmode=driving">🗺️ 실시간 길찾기</a><span></span></div></section>
+<section class="card step" data-start="15:10"><div class="head"><div class="ico">🏨</div><div><div class="tm">약 15:10–16:10</div><div class="ttl">호텔 정비시간</div><div class="desc">체크인 · 짐 정리 · 샤워/환복. 약 1시간 휴식.</div></div></div><div class="move">⏱️ <b>약 1시간</b> · 컨디션에 따라 조정</div></section>
+<section class="card step" data-start="16:10"><div class="head"><div class="ico">🛍️</div><div><div class="tm">약 16:10</div><div class="ttl">쉐라톤 → Ala Moana Center</div><div class="desc">첫날 쇼핑 시작. 구매량에 따라 시간을 유동적으로 사용.</div></div></div><div class="move">🚗 렌터카/택시 · <b>약 10~20분</b> · 짐 때문에 도보 비추천</div><div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Sheraton+Waikiki+Beach+Resort&destination=Ala+Moana+Center&travelmode=driving">🗺️ 실시간 길찾기</a><span></span></div></section>
+<section class="card step" data-start="16:30"><div class="head"><div class="ico">🛒</div><div><div class="tm">약 16:30–18:20</div><div class="ttl">Ala Moana 쇼핑</div><div class="desc">쇼핑하면서 Level 1 Makai Market 방향으로 이동.</div></div></div><div class="move">🚶 센터 내부 도보 · 수요일 센터는 현재 <b>20:00까지</b></div></section>
+<section class="card step" data-start="18:20"><div class="head"><div class="ico">🍗</div><div><div class="tm">약 18:20–19:00</div><div class="ttl">Chick-fil-A + Raising Cane’s</div><div class="desc">저녁이 따로 있으니 맛보기. Chick-fil-A는 Original Sandwich/Nuggets, Cane’s는 Finger + Cane’s Sauce + Texas Toast 중심.</div></div></div><div class="move">🚶 <b>둘 다 Ala Moana Center Level 1 Makai Market</b></div><div class="btns"><a class="b s" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Chick-fil-A+Ala+Moana+Mall">🐔 Chick-fil-A</a><a class="b s" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Raising+Cane's+Ala+Moana+Mall">🍗 Cane’s</a></div></section>
+<section class="card step" data-start="19:00"><div class="head"><div class="ico">🚙</div><div><div class="tm">약 19:00</div><div class="ttl">Ala Moana → Waikiki</div><div class="desc">호텔로 복귀해 차를 두고 저녁부터 도보 이동.</div></div></div><div class="move">🚗 <b>약 10~20분</b> · 저녁 교통 시 증가 가능</div><div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Ala+Moana+Center&destination=Sheraton+Waikiki+Beach+Resort&travelmode=driving">🗺️ 실시간 길찾기</a><span></span></div></section>
+<section class="card step" data-start="19:30"><div class="head"><div class="ico">🦀</div><div><div class="tm">약 19:30–21:00</div><div class="ttl">Cajun Seafood 저녁</div><div class="desc">현재 동선상 Cajun Crab Waikiki Beach Walk가 1순위.</div></div></div><div class="move">🚶 쉐라톤에서 <b>도보 이동 우선</b></div><div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Sheraton+Waikiki+Beach+Resort&destination=Cajun+Crab+Waikiki+226+Lewers+St&travelmode=walking">🚶 길찾기</a><a class="b s" href="#cajun">🏆 후보 보기</a></div></section>
+<section class="card step" data-start="21:00"><div class="head"><div class="ico">🍰</div><div><div class="tm">21:00 이후</div><div class="ttl">Waikiki 디저트</div><div class="desc">Cheesecake Factory 포함 후보 중 대기줄·컨디션을 보고 선택.</div></div></div><div class="move">🚶 <b>와이키키 중심은 도보</b> · 영업시간 확인</div><div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/search/?api=1&query=The+Cheesecake+Factory+Waikiki">🍰 Cheesecake</a><a class="b s" href="#dessert">🏆 후보 보기</a></div></section>
+</div>
+<section class="card" id="cajun"><h2>🦀 Cajun / Seafood Boil 후보</h2>
+<div class="rank"><div class="n">1</div><div><div class="rn">Cajun Crab Waikiki · Beach Walk <span class="tag">추천</span></div><div class="rate">Google ★4.9 · 3,582 │ Yelp ★4.3 · 109</div><div class="why">226 Lewers St. 위치와 리뷰 표본 모두 첫날에 가장 유리.</div><div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Cajun+Crab+Waikiki+226+Lewers+St">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Cajun+Crab+Waikiki&find_loc=Honolulu%2C+HI">Yelp</a></div></div></div>
+<div class="rank"><div class="n">2</div><div><div class="rn">Cajun Crab · International Market Place</div><div class="rate">Google ★5.0 · 872</div><div class="why">2026년 7월 오픈 2호점. 와이키키 중심, 신규점.</div><div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Cajun+Crab+International+Market+Place">Maps</a></div></div></div>
+<div class="rank"><div class="n">3</div><div><div class="rn">Kickin Kajun Honolulu</div><div class="rate">Google ★4.3 · 1,109 │ Yelp ★3.9 · 876</div><div class="why">오래된 Cajun seafood 전문점. Ala Moana 쪽 대안.</div><div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Kickin+Kajun+Honolulu">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Kickin+Kajun&find_loc=Honolulu%2C+HI">Yelp</a></div></div></div>
+<div class="rank"><div class="n">4</div><div><div class="rn">The Boiling Crab Honolulu</div><div class="rate">Google ★4.2 · 841</div><div class="why">미국식 seafood boil 체인. Kaka‘ako라 차량 필요.</div></div></div>
+<div class="rank"><div class="n">5</div><div><div class="rn">Cajun King Aiea</div><div class="rate">Google ★4.2 · 496</div><div class="why">비교 후보. Aiea라 첫날 동선에는 비효율적.</div></div></div>
+<div class="note">Top 5는 Waikiki만이 아니라 Honolulu/Aiea까지 넓힌 비교 후보. Crackin’ Kitchen은 현재 폐업으로 확인되어 제외.</div></section>
+<section class="card" id="dessert"><h2>🍨 늦은 밤 디저트 후보</h2>
+<div class="rank"><div class="n">1</div><div><div class="rn">MOSA! <span class="tag">늦은 밤</span></div><div class="rate">Google ★4.9 · 495 │ Yelp ★4.9 · 249*</div><div class="why">아이스크림 + 피넛 브리틀. 현재 자정까지 영업.</div><div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=MOSA+2238+Lauula+St+Honolulu">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=MOSA&find_loc=Waikiki%2C+Honolulu%2C+HI">Yelp</a></div></div></div>
+<div class="rank"><div class="n">2</div><div><div class="rn">Island Vintage Shave Ice</div><div class="rate">Yelp ★4.5 · 약 2,000*</div><div class="why">하와이 여행다운 과일 쉐이브 아이스.</div><div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Island+Vintage+Shave+Ice+Waikiki">Maps</a></div></div></div>
+<div class="rank"><div class="n">3</div><div><div class="rn">Liliha Bakery · International Market Place</div><div class="rate">Google ★4.2 · 2,221</div><div class="why">하와이 로컬 베이커리. Coco Puff 등.</div></div></div>
+<div class="rank"><div class="n">4</div><div><div class="rn">The Cheesecake Factory <span class="tag">계획</span></div><div class="rate">Yelp ★3.6 · 2,818</div><div class="why">Royal Hawaiian Center. 30종+ cheesecake, 현재 23:00까지.</div></div></div>
+<div class="rank"><div class="n">5</div><div><div class="rn">Lappert’s Hawaii</div><div class="rate">Google ★4.4 · 1,656</div><div class="why">아이스크림·커피. Hilton Hawaiian Village 방향.</div></div></div>
+<div class="note">* 평점/리뷰수는 2026-09-27 검색 시점 값이며 변동 가능. Google과 Yelp는 표본이 달라 합산하지 않고 병기. Kona Coffee Purveyors는 좋지만 16:00 종료라 첫날 밤 후보에서 제외.</div></section>
+</section>
+<section id="day2" class="daypanel">
+<div id="day2steps">
+<section class="card step" data-start="05:00">
+<div class="head"><div class="ico">⏰</div><div><div class="tm">05:00</div><div class="ttl">기상 · 트레킹 준비</div>
+<div class="desc">가볍게 수분 보충, 운동복·모자·물 준비. Diamond Head 비거주자 예약/주차 예약 확인.</div></div></div>
+<div class="move">🏨 호텔 출발 권장 <b>05:35 전후</b></div>
+<div class="btns"><a class="b s" target="_blank" href="https://dlnr.hawaii.gov/dsp/parks/oahu/diamond-head-state-monument/">🎟️ 예약/공식 안내</a><span></span></div>
+</section>
 
-<section class="card"><h2>① 출발지</h2><div class="grid" id="fromGrid">
-<button type="button" class="place selected" data-from="0"><span class="emoji">🏨</span>쉐라톤</button>
-<button type="button" class="place" data-from="1"><span class="emoji">🏖️</span>카할라</button>
-<button type="button" class="place" data-from="2"><span class="emoji">🌊</span>웨이메아 베이</button>
-<button type="button" class="place" data-from="3"><span class="emoji">🌺</span>PCC</button>
-<button type="button" class="place" data-from="4"><span class="emoji">🍍</span>돌 플랜테이션</button>
-<button type="button" class="place" data-from="5"><span class="emoji">🦖</span>쿠알로아 랜치</button>
-</div></section>
+<section class="card step" data-start="05:35">
+<div class="head"><div class="ico">🚗</div><div><div class="tm">05:35 출발</div><div class="ttl">쉐라톤 → Diamond Head</div>
+<div class="desc">06:00 입장에 맞춰 이동. 주차·입장 확인 시간을 포함해 약간 여유 있게 출발.</div></div></div>
+<div class="move">🚗 렌터카 · <b>약 14~20분</b> · 비거주자는 사전 입장/주차 예약 필요</div>
+<div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Sheraton+Waikiki+Beach+Resort&destination=Diamond+Head+State+Monument&travelmode=driving">🗺️ 실시간 길찾기</a><span></span></div>
+</section>
 
-<section class="card"><h2>② 목적지</h2><div class="grid" id="toGrid">
-<button type="button" class="place" data-to="0"><span class="emoji">🏨</span>쉐라톤</button>
-<button type="button" class="place" data-to="1"><span class="emoji">🏖️</span>카할라</button>
-<button type="button" class="place" data-to="2"><span class="emoji">🌊</span>웨이메아 베이</button>
-<button type="button" class="place selected" data-to="3"><span class="emoji">🌺</span>PCC</button>
-<button type="button" class="place" data-to="4"><span class="emoji">🍍</span>돌 플랜테이션</button>
-<button type="button" class="place" data-to="5"><span class="emoji">🦖</span>쿠알로아 랜치</button>
-</div></section>
+<section class="card step" data-start="06:00">
+<div class="head"><div class="ico">🥾</div><div><div class="tm">06:00–08:30</div><div class="ttl">Diamond Head 트레킹</div>
+<div class="desc">일출 이후 비교적 선선한 시간대. 공식 안내는 정상 왕복에 보통 1.5–2시간을 권장하므로 2시간 30분이면 사진·휴식까지 여유 있는 편.</div></div></div>
+<div class="move">🥾 트레킹 · <b>약 2시간 30분 확보</b> · 물/모자/선크림 권장</div>
+</section>
 
-<section class="card">
-<div class="result"><div class="route" id="route">쉐라톤 와이키키 → 폴리네시안 문화센터</div><div class="time" id="time">약 1시간 15분</div></div>
-<a class="btn map" id="maps" href="https://www.google.com/maps/dir/?api=1&origin=Sheraton%20Waikiki%20Beach%20Resort%2C%20Honolulu%2C%20HI&destination=Polynesian%20Cultural%20Center%2C%20Laie%2C%20HI&travelmode=driving">🗺️ Google Maps 실시간 길찾기</a>
-<button type="button" class="btn swap" id="swap">⇅ 출발지 ↔ 목적지 바꾸기</button>
-<div class="note">※ 표시 시간은 여행 계획용 예상치입니다. 실제 출발 직전에는 Google Maps에서 교통상황을 확인하세요.</div>
-</section></main>
+<section class="card step" data-start="08:30">
+<div class="head"><div class="ico">🏨</div><div><div class="tm">08:30 출발</div><div class="ttl">Diamond Head → 쉐라톤</div>
+<div class="desc">트레킹 종료 후 호텔 복귀.</div></div></div>
+<div class="move">🚗 렌터카 · <b>약 15~20분</b></div>
+<div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Diamond+Head+State+Monument&destination=Sheraton+Waikiki+Beach+Resort&travelmode=driving">🗺️ 실시간 길찾기</a><span></span></div>
+</section>
+
+<section class="card step" data-start="08:50">
+<div class="head"><div class="ico">🚿</div><div><div class="tm">약 08:50–09:50</div><div class="ttl">호텔 정비 · 1시간</div>
+<div class="desc">샤워·환복·PCC용 짐 정리. 휴대용 점심 주문/픽업 준비.</div></div></div>
+<div class="move">⏱️ <b>약 1시간</b> · 10:20 전에는 PCC로 출발하는 것이 안전</div>
+<div class="callout">🥣 하루 1회 아사이볼을 먹는다면 <b>Island Vintage Coffee</b>에서 아사이볼 + 휴대용 샌드위치를 한 번에 픽업하는 방식도 효율적.</div>
+</section>
+
+<section class="card step" data-start="09:50">
+<div class="head"><div class="ico">🍙</div><div><div class="tm">약 09:50–10:15</div><div class="ttl">PCC용 휴대 음식 픽업</div>
+<div class="desc">무스비·샌드위치처럼 손에 들고 먹기 쉬운 메뉴 위주. 아래 Top 5에서 선택.</div></div></div>
+<div class="move">🚶 <b>와이키키 도보 픽업 우선</b> · 10:20 출발 목표</div>
+<div class="btns"><a class="b s" href="#carryfood">🏆 휴대식 Top 5</a><a class="b s" target="_blank" href="https://www.polynesia.com/faq/park-rules">🥡 PCC 반입 규정</a></div>
+</section>
+
+<section class="card step" data-start="10:20">
+<div class="head"><div class="ico">🌺</div><div><div class="tm">10:20 출발 → 11:35~11:45 도착</div><div class="ttl">쉐라톤 → PCC</div>
+<div class="desc">목표 도착 11:45. PCC 공식 안내는 Waikiki/Honolulu에서 <b>직행 운전 60–75분</b>을 잡으라고 안내함.</div></div></div>
+<div class="move">🚗 렌터카 · <b>약 60~75분</b> · 여유 포함 10:20 출발 권장</div>
+<div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Sheraton+Waikiki+Beach+Resort&destination=Polynesian+Cultural+Center&travelmode=driving">🗺️ 실시간 길찾기</a><a class="b s" target="_blank" href="https://www.polynesia.com/faq/direction-and-parking">🚗 PCC 교통 안내</a></div>
+</section>
+
+<section class="card step" data-start="11:45">
+<div class="head"><div class="ico">🗿</div><div><div class="tm">11:45–21:00</div><div class="ttl">Polynesian Cultural Center</div>
+<div class="desc">11:45 도착·입장 준비 → 12:00 센터 오픈 → 12:15 Island Villages 시작 → 저녁 일정 → HĀ 종료 약 21:00.</div></div></div>
+<div class="move">🚶 PCC 내부 일정 · <b>약 9시간</b></div>
+<div class="callout">🥡 PCC는 개인용 외부 음식/무알코올 음료 반입을 허용하지만, <b>대형 쿨러·유리용기·가열/냉장/온도관리가 필요한 음식은 불가</b>. 입장 시 직원에게 음식 소지를 알리면 됨.</div>
+<div class="note">휴대식은 뜨거운 차 안에 두지 말고, 도착 후 정오~이른 오후에 먹는 것이 좋음. 마요네즈·생선·달걀이 많은 메뉴보다 단순한 무스비/샌드위치가 휴대에 유리.</div>
+</section>
+
+<section class="card step" data-start="21:00">
+<div class="head"><div class="ico">🌙</div><div><div class="tm">약 21:00 출발</div><div class="ttl">PCC → 쉐라톤 · Day 2 종료</div>
+<div class="desc">HĀ 종료 후 주차장으로 이동해 호텔 복귀.</div></div></div>
+<div class="move">🚗 렌터카 · <b>약 60~75분</b> · 호텔 도착 예상 22:00~22:20</div>
+<div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Polynesian+Cultural+Center&destination=Sheraton+Waikiki+Beach+Resort&travelmode=driving">🗺️ 실시간 길찾기</a><span></span></div>
+</section>
+</div>
+
+<section class="card" id="carryfood">
+<h2>🥡 PCC 휴대식 Top 5</h2>
+
+<div class="rank"><div class="n">1</div><div>
+<div class="rn">Musubi Cafe IYASUME · Beach Walk <span class="tag">가장 추천</span></div>
+<div class="rate">Google ★4.5 · 483 │ Yelp ★4.4 · 337</div>
+<div class="why">227 Lewers St. 쉐라톤과 매우 가깝고 07:00 오픈. Spam Musubi/오니기리가 작고 먹기 편해 PCC용으로 가장 실용적.</div>
+<div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Musubi+Cafe+IYASUME+Waikiki+Beach+Walk">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Musubi+Cafe+Iyasume+Beachwalk&find_loc=Honolulu%2C+HI">Yelp</a></div>
+</div></div>
+
+<div class="rank"><div class="n">2</div><div>
+<div class="rn">Island Vintage Coffee · Waikiki <span class="tag">아사이 동시 해결</span></div>
+<div class="rate">Google 약 ★4.3~4.4 · 4천+ │ Yelp ★4.3 · 리뷰 4천+</div>
+<div class="why">Royal Hawaiian Center. 아사이볼과 BALT·bagel·sandwich류를 한 번에 주문 가능. 05:00~22:00 영업 정보가 있어 일정 적합성이 높음.</div>
+<div class="note"><b>왜 2순위?</b> 하루 1회 아사이볼 계획과 PCC용 휴대 점심을 한 번의 픽업으로 같이 해결할 수 있고, 쉐라톤 바로 옆 Royal Hawaiian Center라 이동 손실이 거의 없기 때문. 단, 무스비 자체의 휴대 편의성은 IYASUME가 더 좋아 1순위는 그대로 유지.</div>
+<div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Island+Vintage+Coffee+2301+Kalakaua+Ave">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Island+Vintage+Coffee&find_loc=Waikiki%2C+Honolulu%2C+HI">Yelp</a></div>
+</div></div>
+
+<div class="rank"><div class="n">3</div><div>
+<div class="rn">Kono's Northshore · Waikiki</div>
+<div class="rate">Google ★4.4 · 1,138 │ Yelp ★4.3 · 932</div>
+<div class="why">07:00 오픈. 칼루아 포크 샌드위치/브리또가 포만감 있고 휴대가 쉬움. 트레킹 후 허기가 클 때 유리.</div>
+<div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Kono's+Northshore+Waikiki">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Kono%27s+Northshore+Waikiki&find_loc=Honolulu%2C+HI">Yelp</a></div>
+</div></div>
+
+<div class="rank"><div class="n">4</div><div>
+<div class="rn">Dukes Lane Market & Eatery</div>
+<div class="rate">Google ★4.3 · 983 │ Yelp ★4.0 · 301</div>
+<div class="why">06:30 오픈. 샌드위치·델리·grab-and-go 선택지가 많아 대기 없이 고르기 좋은 백업 옵션.</div>
+<div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Dukes+Lane+Market+and+Eatery">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Dukes+Lane+Market+%26+Eatery&find_loc=Honolulu%2C+HI">Yelp</a></div>
+</div></div>
+
+<div class="rank"><div class="n">5</div><div>
+<div class="rn">ALOHA MELT · Waikiki</div>
+<div class="rate">Google ★4.7 · 약 1,500 │ Yelp ★4.7 · 약 682</div>
+<div class="why">그릴드 치즈/파니니 계열 평가가 매우 좋지만 10:00 오픈이라 일정상 가장 촉박. 온라인/전화 주문 후 10시 픽업이 가능할 때만 추천.</div>
+<div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=ALOHA+MELT+Waikiki">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Aloha+Melt+Waikiki&find_loc=Honolulu%2C+HI">Yelp</a></div>
+</div></div>
+
+<div class="note"><b>일정 기준 추천 조합:</b> 가장 간단하게는 IYASUME에서 Spam Musubi 2~3개. 아사이볼까지 같이 해결하려면 Island Vintage Coffee에서 아사이볼을 먼저 먹고, BALT/샌드위치를 포장해 PCC로 가져가는 방식이 효율적.</div>
+</section>
+</section>
+
+<section id="day3" class="daypanel">
+<div id="day3steps">
+
+<section class="card step" data-start="06:30">
+<div class="head"><div class="ico">🥐</div><div><div class="tm">06:30–07:15</div><div class="ttl">픽업 전 간단한 아침</div>
+<div class="desc">07:30 호텔 픽업 전에 도보로 빠르게 구입. 많이 먹기보다 스노클링 전 속이 편한 양으로.</div></div></div>
+<div class="move">🚶 <b>쉐라톤 주변 도보</b> · 07:20에는 호텔 로비 복귀 권장</div>
+<div class="callout"><b>가장 안전:</b> Island Vintage Coffee는 매장 05:00 오픈. 아사이/음료·페이스트리 주문은 06:00부터, 일반 Food 주문은 07:00부터 가능.</div>
+<div class="foodpick"><b>① Island Vintage Coffee</b> — Royal Hawaiian Center. 아사이볼/페이스트리/커피. 아사이볼을 Day 3에 배정할 거라면 여기서 해결.</div>
+<div class="foodpick"><b>② ABC Stores #38</b> — 205 Lewers St, 06:30 오픈. 샌드위치·과일·음료 등 grab-and-go가 가장 빠른 백업.</div>
+<div class="foodpick"><b>③ Musubi Cafe IYASUME Beach Walk</b> — 227 Lewers St, 07:00 오픈. 무스비 1~2개 포장하기 좋지만 07:30 픽업이라 시간은 촉박.</div>
+<div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Island+Vintage+Coffee+2301+Kalakaua+Ave">☕ Island Vintage</a><a class="b s" target="_blank" href="https://www.google.com/maps/search/?api=1&query=ABC+Stores+38+205+Lewers+St">🛒 ABC #38</a></div>
+</section>
+
+<section class="card step" data-start="07:30">
+<div class="head"><div class="ico">🤿</div><div><div class="tm">07:30–13:00</div><div class="ttl">Hanauma Bay 스노클링 투어</div>
+<div class="desc">07:30 쉐라톤 호텔 픽업 → Hanauma Bay 이동 → 스노클링 → 약 13:00 호텔 복귀 예정.</div></div></div>
+<div class="move">🚐 <b>투어 픽업 차량</b> · 왕복 이동 포함 일정</div>
+</section>
+
+<section class="card step" data-start="13:00">
+<div class="head"><div class="ico">🛏️</div><div><div class="tm">13:00–14:00</div><div class="ttl">호텔 복귀 · 컨디션 조절</div>
+<div class="desc">샤워·환복·수분 보충. 오후 크루즈가 있으니 이 시간은 고정 휴식으로 확보.</div></div></div>
+<div class="move">⏱️ <b>약 1시간</b></div>
+</section>
+
+<section class="card step" data-start="14:00">
+<div class="head"><div class="ico">🌮</div><div><div class="tm">14:00–15:20</div><div class="ttl">점심 · Pit Stop 또는 대안</div>
+<div class="desc">원래 계획은 Pit Stop Hawaii Food Truck. 15:40까지 호텔 복귀가 목표이므로 대기열이 길면 아래 대안으로 바로 전환.</div></div></div>
+<div class="move">🚶 Pit Stop은 쉐라톤에서 <b>도보 약 12~18분 예상</b> · 식사 후 늦어도 15:20 전후 출발 권장</div>
+<div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Sheraton+Waikiki+Beach+Resort&destination=Pit+Stop+Hawaii+Food+Truck&travelmode=walking">🚶 Pit Stop 길찾기</a><a class="b s" href="#day3lunch">🏆 점심 Top 5</a></div>
+<div class="note">Pit Stop은 음식 평가는 매우 좋지만 최근 방문 정보에서 주문·대기까지 30~40분 걸릴 수 있다는 언급이 있어, 크루즈가 있는 날은 대기 상황을 보고 즉시 대체하는 편이 안전.</div>
+</section>
+
+<section class="card step" data-start="15:40">
+<div class="head"><div class="ico">👔</div><div><div class="tm">15:40–16:10</div><div class="ttl">호텔 복귀 · 크루즈 준비</div>
+<div class="desc">환복·소지품 정리. 체크인 장소는 Aloha Tower Marketplace, Pier 8.</div></div></div>
+<div class="move">⏱️ <b>약 30분 준비</b></div>
+</section>
+
+<section class="card step" data-start="16:10">
+<div class="head"><div class="ico">🚕</div><div><div class="tm">16:10 출발</div><div class="ttl">쉐라톤 → Aloha Tower Pier 8</div>
+<div class="desc">미팅 16:45. 공식 안내는 Waikiki에서 Pier 8까지 약 15분 드라이브로 안내하지만, 금요일 오후 교통과 하차 동선을 고려해 35분 전 출발.</div></div></div>
+<div class="move">🚕 <b>택시/Uber 약 15~25분 예상</b> · 렌터카도 가능하지만 주차 시간이 추가됨</div>
+<div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Sheraton+Waikiki+Beach+Resort&destination=Aloha+Tower+Marketplace+Pier+8&travelmode=driving">🗺️ 실시간 길찾기</a><a class="b s" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Aloha+Tower+Marketplace+Pier+8">📍 Pier 8</a></div>
+</section>
+
+<section class="card step" data-start="16:45">
+<div class="head"><div class="ico">🚢</div><div><div class="tm">16:45–20:30</div><div class="ttl">Sunset Cruise</div>
+<div class="desc">16:45 Pier-side Welcome/Boarding → 17:30 출항. 10/2는 금요일이라 공식 Pacific Star 일정 기준 <b>20:30 귀항</b>.</div></div></div>
+<div class="move">🚢 <b>약 3시간 45분</b> · Aloha Tower Marketplace, Pier 8</div>
+<div class="note">예약 상품명이 Star of Honolulu의 다른 패키지라면 세부 프로그램은 다를 수 있지만, Pier 8 / 16:45 체크인 / 17:30 출항 / 금요일 20:30 귀항 일정은 Pacific Star 공식 일정과 일치.</div>
+</section>
+
+<section class="card step" data-start="20:30">
+<div class="head"><div class="ico">🌙</div><div><div class="tm">20:30 이후</div><div class="ttl">Pier 8 → 쉐라톤 · Day 3 종료</div>
+<div class="desc">하선 후 호텔 복귀. 크루즈에서 음주할 가능성이 있다면 렌터카보다 택시/Uber가 편하고 안전.</div></div></div>
+<div class="move">🚕 택시/Uber · <b>약 15~25분 예상</b> · 호텔 도착 약 20:50~21:10</div>
+<div class="btns"><a class="b p" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Aloha+Tower+Marketplace+Pier+8&destination=Sheraton+Waikiki+Beach+Resort&travelmode=driving">🗺️ 호텔 길찾기</a><span></span></div>
+</section>
+
+</div>
+
+<section class="card" id="day3lunch">
+<h2>🍽️ Day 3 점심 Top 5</h2>
+
+<div class="rank"><div class="n">1</div><div>
+<div class="rn">Pit Stop Hawaii Food Truck <span class="tag">계획</span></div>
+<div class="rate">Google ★4.8 · 1,887 │ Yelp 약 ★4.9 · 355+ (최근 노출 리뷰 401)</div>
+<div class="why">2411 Kūhiō Ave. Crispy Cheese Taco/Burger, Kalua pork fries, mahi-mahi 등. 개성은 가장 강하지만 대기 30~40분 가능성이 변수.</div>
+<div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Pit+Stop+Hawaii+Food+Truck">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Pit+Stop+Hawaii+Food+Truck&find_loc=Honolulu%2C+HI">Yelp</a></div>
+</div></div>
+
+<div class="rank"><div class="n">2</div><div>
+<div class="rn">Steak Shack <span class="tag">시간 안정성</span></div>
+<div class="rate">Google ★4.5 · 3,157 │ Yelp ★4.5 · 1,427</div>
+<div class="why">2161 Kālia Rd. 쉐라톤과 매우 가깝고 테이크아웃 중심이라 시간 맞추기 쉬움. Steak/Chicken plate가 대표.</div>
+<div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Steak+Shack+Honolulu">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Steak+Shack&find_loc=Honolulu%2C+HI">Yelp</a></div>
+</div></div>
+
+<div class="rank"><div class="n">3</div><div>
+<div class="rn">Maguro Spot</div>
+<div class="rate">Google ★4.6 · 3,670 │ Yelp ★4.3 · 약 1.4k</div>
+<div class="why">2441 Kūhiō Ave. 포케를 주문 후 빠르게 먹기 좋고, 줄이 있어도 비교적 회전이 빠르다는 최근 리뷰가 많음.</div>
+<div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Maguro+Spot+2441+Kuhio+Ave">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Maguro+Spot&find_loc=Honolulu%2C+HI">Yelp</a></div>
+</div></div>
+
+<div class="rank"><div class="n">4</div><div>
+<div class="rn">Paia Fish Market Waikiki</div>
+<div class="rate">Google ★4.6 · 4,578 │ Yelp ★4.4 · 약 3.0k</div>
+<div class="why">2299 Kūhiō Ave. mahi-mahi/ono 등 하와이 생선 플레이트. 음식은 강하지만 피크에는 줄이 길 수 있어 시간 체크 필요.</div>
+<div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Paia+Fish+Market+Waikiki">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Paia+Fish+Market+Waikiki&find_loc=Honolulu%2C+HI">Yelp</a></div>
+</div></div>
+
+<div class="rank"><div class="n">5</div><div>
+<div class="rn">Kono's Northshore · Waikiki</div>
+<div class="rate">Google ★4.4 · 1,138 │ Yelp ★4.3 · 932</div>
+<div class="why">2310 Kūhiō Ave. Kalua pork sandwich/burrito. 주문이 단순하고 포장하기 쉬워 크루즈 전 일정이 밀릴 때 좋은 백업.</div>
+<div class="links"><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Kono's+Northshore+Waikiki">Maps</a><a target="_blank" href="https://www.yelp.com/search?find_desc=Kono%27s+Northshore+Waikiki&find_loc=Honolulu%2C+HI">Yelp</a></div>
+</div></div>
+
+<div class="note"><b>시간 우선 선택:</b> Pit Stop 줄이 길면 Steak Shack → Maguro Spot 순으로 전환하는 게 15:40 호텔 복귀를 맞추기 쉬움. 평점/리뷰 수는 2026-09-27 검색 시점이며 플랫폼별 수치는 변동 가능.</div>
+</section>
+</section>
+
+<div class="nav"><button class="prev" id="prev">← 이전</button><button class="next" id="next">다음 일정 →</button></div>
+</main>
 <script>
 (function(){
-var P=[
-["쉐라톤 와이키키","Sheraton Waikiki Beach Resort, Honolulu, HI"],
-["카할라","The Kahala Hotel & Resort, Honolulu, HI"],
-["웨이메아 베이","Waimea Bay Beach Park, Haleiwa, HI"],
-["폴리네시안 문화센터","Polynesian Cultural Center, Laie, HI"],
-["돌 플랜테이션","Dole Plantation, Wahiawa, HI"],
-["쿠알로아 랜치","Kualoa Ranch, Kaneohe, HI"]];
-var T=[[0,20,75,75,40,50],[20,0,75,65,55,40],[75,75,0,35,22,50],[75,65,35,0,50,23],[40,55,22,50,0,45],[50,40,50,23,45,0]];
-var from=0,to=3;
-function fmt(m){if(m===0)return "같은 장소";if(m<60)return "약 "+m+"분";var h=Math.floor(m/60),r=m%60;return "약 "+h+"시간"+(r?" "+r+"분":"");}
-function mark(attr,val){
- var buttons=document.querySelectorAll("button["+attr+"]"),i;
- for(i=0;i<buttons.length;i++){buttons[i].className="place"+(parseInt(buttons[i].getAttribute(attr),10)===val?" selected":"");}
+var selectedDay=null, manual={day1:-1,day2:-1,day3:-1};
+var info={
+ day1:{y:2026,m:9,d:30,title:"🌴 Oahu · Day 1",date:"2026. 9. 30 · Honolulu"},
+ day2:{y:2026,m:10,d:1,title:"🌺 Oahu · Day 2",date:"2026. 10. 1 · Honolulu"},
+ day3:{y:2026,m:10,d:2,title:"🤿 Oahu · Day 3",date:"2026. 10. 2 · Friday · Honolulu"}
+};
+function hNow(){
+ var p=new Intl.DateTimeFormat("en-US",{timeZone:"Pacific/Honolulu",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date()),o={},i;
+ for(i=0;i<p.length;i++)o[p[i].type]=p[i].value;
+ return{y:+o.year,m:+o.month,d:+o.day,h:+o.hour,n:+o.minute,text:o.month+"/"+o.day+" "+o.hour+":"+o.minute+" HST"};
 }
-function update(){
- mark("data-from",from);mark("data-to",to);
- document.getElementById("route").innerHTML=P[from][0]+" → "+P[to][0];
- document.getElementById("time").innerHTML=fmt(T[from][to]);
- document.getElementById("maps").href="https://www.google.com/maps/dir/?api=1&origin="+encodeURIComponent(P[from][1])+"&destination="+encodeURIComponent(P[to][1])+"&travelmode=driving";
+function cmp(t,d){
+ var a=t.y*10000+t.m*100+t.d,b=d.y*10000+d.m*100+d.d;
+ return a<b?-1:(a>b?1:0);
 }
-var fb=document.querySelectorAll("button[data-from]"),tb=document.querySelectorAll("button[data-to]"),i;
-for(i=0;i<fb.length;i++){fb[i].onclick=function(){from=parseInt(this.getAttribute("data-from"),10);update();};}
-for(i=0;i<tb.length;i++){tb[i].onclick=function(){to=parseInt(this.getAttribute("data-to"),10);update();};}
-document.getElementById("swap").onclick=function(){var x=from;from=to;to=x;update();};
-update();
+function defaultDay(t){
+ if(cmp(t,info.day1)<=0)return"day1";
+ if(cmp(t,info.day1)>0 && cmp(t,info.day2)<0)return"day1";
+ if(cmp(t,info.day2)===0)return"day2";
+ if(cmp(t,info.day3)>=0)return"day3";
+ return"day2";
+}
+function stepsFor(day){return document.querySelectorAll("#"+day+" .step");}
+function autoIndex(day,t){
+ var s=stepsFor(day),c=cmp(t,info[day]),i,a,x=0,m;
+ if(c<0)return 0;
+ if(c>0)return s.length-1;
+ m=t.h*60+t.n;
+ for(i=0;i<s.length;i++){a=s[i].getAttribute("data-start").split(":");if(m>=+a[0]*60+(+a[1]))x=i;}
+ return x;
+}
+function showDay(day,keepManual){
+ selectedDay=day;
+ var panels=document.querySelectorAll(".daypanel"),tabs=document.querySelectorAll(".tab"),i;
+ for(i=0;i<panels.length;i++)panels[i].className="daypanel"+(panels[i].id===day?" active":"");
+ for(i=0;i<tabs.length;i++)tabs[i].className="tab"+(tabs[i].getAttribute("data-day")===day?" active":"");
+ document.getElementById("heroTitle").innerHTML=info[day].title;
+ document.getElementById("heroDate").innerHTML=info[day].date;
+ if(!keepManual && manual[day]===undefined)manual[day]=-1;
+ draw();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function draw(){
+ var t=hNow(),day=selectedDay||defaultDay(t),s=stepsFor(day),x=manual[day]>=0?manual[day]:autoIndex(day,t),i;
+ document.getElementById("clock").innerHTML="🕒 Honolulu "+t.text;
+ document.getElementById("status").innerHTML=(manual[day]>=0?"수동 진행 · ":"시간표 자동 진행 · ")+"현재 "+(x+1)+"/"+s.length+" 단계";
+ for(i=0;i<s.length;i++)s[i].className="card step"+(i===x?" current":(i<x?" done":""));
+}
+var tabs=document.querySelectorAll(".tab"),i;
+for(i=0;i<tabs.length;i++){tabs[i].onclick=function(){showDay(this.getAttribute("data-day"),true);};}
+document.getElementById("next").onclick=function(){
+ var t=hNow(),day=selectedDay,s=stepsFor(day),x=manual[day]>=0?manual[day]:autoIndex(day,t);
+ if(x<s.length-1){manual[day]=x+1;draw();s[manual[day]].scrollIntoView({behavior:"smooth",block:"center"});}
+ else if(day==="day1"){manual.day2=0;showDay("day2",true);}
+ else if(day==="day2"){manual.day3=0;showDay("day3",true);}
+};
+document.getElementById("prev").onclick=function(){
+ var t=hNow(),day=selectedDay,s=stepsFor(day),x=manual[day]>=0?manual[day]:autoIndex(day,t);
+ if(x>0){manual[day]=x-1;draw();s[manual[day]].scrollIntoView({behavior:"smooth",block:"center"});}
+ else if(day==="day2"){var p=stepsFor("day1");manual.day1=p.length-1;showDay("day1",true);}
+ else if(day==="day3"){var q=stepsFor("day2");manual.day2=q.length-1;showDay("day2",true);}
+};
+var t=hNow();selectedDay=defaultDay(t);showDay(selectedDay,true);setInterval(draw,30000);
 })();
 </script></body></html>
